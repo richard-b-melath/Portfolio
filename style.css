@@ -90,9 +90,11 @@ button:hover{
 }
 span{
     margin-left: 1%;
+    margin-bottom: 1%;
+    margin-top: 1%;
     display: inline-block;
     background-color: #6bebe480;
-    padding: 10%;
+    padding: 1%;
     border-radius: 15px;
 }
 
