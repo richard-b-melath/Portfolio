@@ -1,114 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Electrolize&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=New+Amsterdam&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=SUSE:wght@100..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Rubik:ital,wght@0,300..900;1,300..900&family=SUSE:wght@100..800&display=swap');
+
 *{
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    margin: 20;
-    padding: 10;
-    background-color: #24252A;
-    text-decoration: none;
-    color: #edf0f1;
+    font-family: "Rubik", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
     
 }
 
-
-li,p{
-    font-family: sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    color: #edf0f1;
-    text-decoration: none;
-}
-
-
-header {
+.navbar{
+    position: fixed;
+    top: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30px, 10%;
-    color: #edf0f1;
+    background-color: #FFFDFA;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(128, 128, 128,.2);
+    font-family: "Electrolize", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    z-index: 10;
 }
 
 .logo{
+    font-family: "League Spartan", sans-serif;
+    font-size: larger;
     cursor: pointer;
-    margin-left: 1%;
+    padding-left: 20px;
+}
+.logos{
+    color: #FFFDFA;
+    padding-right: 20px;
 }
 
 .nav_links{
+    display: flex;
+    justify-content: center;
     list-style: none;
+    flex-grow: 1;
 }
 
-.nav_links li {
-    display: inline-block;
-    padding: 0px 20px;
+.nav_links li{
+    margin: 0 15px;
 }
 
-.nav_links li a{
-    transition: all 0.3s ease 0s;
+.nav_links a {
+    display: block;
+    padding: 14px 0px;
+    color: #000;
+    text-decoration: none;
+    text-align: center;
 }
 
-.nav_links li a:hover{
-    color: #0088a9;
+.nav_links a:hover{
+    background-color: #f6f6f6;
+    border-radius: 10px;
+}
+body{
+    
+    background-color: #FFFDFA;
+    text-align: center;
 }
 
-.cta{
-    margin-right: 1%;
-}
-
-button{
-    padding: 9px 25px;
-    background-color: rgba(0,136,169,1);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease 0s;
-}
-
-button:hover{
-    background-color: rgba(0,136,169,0.8);
-}
-
-.declare_text{
-    padding: 0;
-    color: rgb(185, 252, 248);
-    margin-bottom: 0px;
-    margin-top: 100px;
-    font-size: 25px;
-}
 
 .name_text{
-    padding: 0;
-    margin:auto;
-    color:aquamarine;
-    margin-top: 10px;
-    font-size: 50px;
+    padding-top: 150px;
+    text-align: center;
+    font-size: 75px;
+    font-family: "Exo 2", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    color: rgba(0, 0, 0,.98);
 }
 
-.fillup_header{
-    margin: 50px;
+.position_text, .dechead{
+    text-align: center;
+    font-size: 35px;
+    font-family: "SUSE", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    color: rgba(0, 0, 0,.79);
+
+}
+
+.position_text{
+    padding-top: 30px;
+}
+
+.dechead{
+    padding-top: 80px;
+    font-weight: 100;
+    font-size: 35px;
+    color:rgb(39, 39, 39)
+}
+
+.skill_section{
+    margin-top: 230px;
+}
+
+.getintouch{
+    margin-top: 27px;
+    padding: 8px;
+    background-color: #FFFDFA;
+    border-width: 1px;
+    border-radius: 15px;
+    padding: 10px 20px;
 }
 
 .category{
-    margin-left: 0%;
+    font-weight: 800px;
+    font-size: larger;
+}
+
+.skills{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    
+}
+.skilld{
+    height: 50px;
 }
 span{
-    margin-left: 1%;
-    margin-bottom: 1%;
-    margin-top: 1%;
-    display: inline-block;
-    background-color: #6bebe480;
-    padding: 1%;
+    padding: 10px;
+    margin: 1%;
+}
+
+.work_section{
+    padding-top: 65px;
+    
+}
+
+.certificate_section{
+    padding-top: 80px;
+}
+
+.certific{
+    padding-top: 100px;
+    margin-top: -100px;
+}
+
+.certifications{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 70px;
+    margin-right: 70px;
+    margin-top: 5%;
+}
+
+.certification_box{
+    z-index: 1;
+    padding: 20px;
+    padding-bottom: 30px;
+    background-color: #cccccc;
+    border-radius: 6%;
+    margin-left: 2px;
+    margin-right: 5px;
+    filter: grayscale(100%);
+}
+
+.certification_box:hover{
+    filter: grayscale(0);
+}
+
+.certification_image{
+    width: 300px;
+    border-radius: 5%;
+}
+
+.about_section{
+    padding-top: 80px;
+    padding-bottom: 250px;
+}
+
+.about_class{
+    padding-top: 150px;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+.forms{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.contact-inputs{
+    width: 600px;
+    height: 50px;
+    border: none;
+    outline: none;
+    padding-left: 25px;
+    font-weight: 500;
+    border-radius: 18px;
+    box-shadow: 3px 0 3px 1px #cccccc;
+}
+
+
+.forms textarea{
+    height: 140px;
+    padding-top: 15px;
+    border-radius: 20px;
+}
+
+.contact_section{
+    margin: 0 400px 0;
+    background-color: #FFFDFA;
+    box-shadow: 0 0 15px 1px #cccccc;
     border-radius: 15px;
+    padding-top: 10px;
 }
 
-.descri{
-    font-size: 150%;
-}
-.dechead{
-    font-weight:bolder;
-}
-section{
-    margin-top: 100px;
-    margin-left: 5%;
+.submission{
+    padding: 8px 100px;
+    margin-bottom: 20px;
+    border-radius: 11px;
+    border: none;
+    font-weight: 100;
 }
 
-.msg{
-    font-size: 125%;
+.uknow{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 70px;
+    margin-right: 70px;
+    margin-top: 5%;
+}
+
+.projects_box{
+    z-index: 1;
+    padding: 20px;
+    padding-bottom: 30px;
+    background-color: #cccccc;
+    border-radius: 6%;
+    margin-left: 2px;
+    margin-right: 5px;
+    filter: grayscale(100%);
+
+}
+
+.projectimg{
+    width: 300px;
+    border-radius: 5%;
+    
+
+}
+
+.projects_box:hover{
+    filter: grayscale(0%);
+}
+
+.github-links{
+    width: 100px;
+    height: 50px;
+    border-radius: 10%;
+    border: 0ch;
+    background-color: #f6f6f6;
+}
+
+.gl{
+    width:80px;
+    height: 40px;
 }
