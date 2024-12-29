@@ -141,21 +141,24 @@ span{
 
 .work_section{
     padding-top: 65px;
+    overflow: hidden;
     
 }
 
 .certificate_section{
+    overflow: hidden;
     padding-top: 80px;
 }
 
 .certific{
     padding-top: 100px;
     margin-top: -100px;
+    
 }
 
 .certifications{
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-left: 70px;
     margin-right: 70px;
     margin-top: 5%;
@@ -236,8 +239,9 @@ html{
 }
 
 .uknow{
+    
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-left: 70px;
     margin-right: 70px;
     margin-top: 3%;
@@ -294,4 +298,12 @@ html{
 a{
     color: inherit;
     text-decoration:none;
+}
+
+
+@media (max-width: 600px){
+    .projects_box{
+        flex: 1 1 100%;
+        max-width: none;
+    }
 }
