@@ -62,7 +62,7 @@ const socialLinks = [
   {
     icon: Globe,
     label: 'Portfolio',
-    href: 'https://richard-b-melath.github.io/Portfolio/',
+    href: 'https://richardbmelath.vercel.app/',
     color: 'hover:text-primary'
   }
 ];

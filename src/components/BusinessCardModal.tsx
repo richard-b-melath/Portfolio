@@ -192,7 +192,7 @@ Generated: ${new Date().toLocaleDateString()}`;
                       <div className="min-w-0 flex-1">
                         <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Portfolio</p>
                         <a
-                          href="https://richard-b-melath.github.io/Portfolio/"
+                          href="https://richardbmelath.vercel.app/"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary text-xs sm:text-sm font-medium hover:text-primary/80 truncate block"
@@ -233,7 +233,7 @@ Generated: ${new Date().toLocaleDateString()}`;
                     <div className="relative">
                       <div className="w-32 h-32 sm:w-36 sm:h-36 lg:w-40 lg:h-40 bg-card rounded-xl lg:rounded-2xl shadow-xl p-3 lg:p-4 flex items-center justify-center border-2 border-primary/10">
                         <QRCodeCanvas
-                        value="https://your-link-here.com"
+                        value="https://richardbmelath.vercel.app/Richard_B_Melath_Contact.txt"
                         size={120}
                         bgColor="transparent"
                         fgColor="#ecedefff"
