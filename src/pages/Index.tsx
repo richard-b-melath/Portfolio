@@ -97,7 +97,7 @@ const Index = () => {
           LinkedIn
         </a>
         <a
-          href="https://richard-b-melath.github.io/Portfolio/"
+          href="https://richardbmelath.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground hover:text-primary transition-colors duration-300 text-sm sm:text-base"
