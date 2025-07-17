@@ -34,7 +34,7 @@ AI & Software Developer
 📧 Email: richardbiju318@gmail.com
 📱 Phone: +91 9544211720
 📍 Location: Angamaly, Kerala, India
-🌐 Portfolio: https://richard-b-melath.github.io/Portfolio/
+🌐 Portfolio: https://richardbmelath.vercel.app/
 
 💼 Specialization:
 - AI Development
@@ -197,7 +197,7 @@ Generated: ${new Date().toLocaleDateString()}`;
                           rel="noopener noreferrer"
                           className="text-primary text-xs sm:text-sm font-medium hover:text-primary/80 truncate block"
                         >
-                          richard-b-melath.github.io
+                          https://richardbmelath.vercel.app/
                         </a>
                       </div>
                     </div>
@@ -236,9 +236,9 @@ Generated: ${new Date().toLocaleDateString()}`;
                         value="https://richardbmelath.vercel.app/Richard_B_Melath_Contact.txt"
                         size={120}
                         bgColor="transparent"
-                        fgColor="#ecedefff"
+                        fgColor="#000000"
                         includeMargin
-                        className="rounded-lg lg:rounded-xl w-full h-full"
+                        className="rounded-lg lg:rounded-xl w-full h-full dark:invert"
                       />
                       </div>
                       <motion.div
@@ -276,12 +276,22 @@ Generated: ${new Date().toLocaleDateString()}`;
                     transition={{ delay: 0.8 }}
                     className="flex space-x-3"
                   >
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-card rounded-lg flex items-center justify-center border border-primary/20">
-                      <LinkedinIcon size={18} className="text-primary sm:w-[20px] sm:h-[20px]" />
-                    </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-card rounded-lg flex items-center justify-center border border-primary/20">
-                      <Github size={18} className="text-primary sm:w-[20px] sm:h-[20px]" />
-                    </div>
+                    <a
+                      href="https://www.linkedin.com/in/richardbmelath/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 sm:w-12 sm:h-12 bg-card rounded-lg flex items-center justify-center border border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-200 group"
+                    >
+                      <LinkedinIcon size={18} className="text-primary sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform duration-200" />
+                    </a>
+                    <a
+                      href="https://github.com/richard-b-melath"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 sm:w-12 sm:h-12 bg-card rounded-lg flex items-center justify-center border border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-200 group"
+                    >
+                      <Github size={18} className="text-primary sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform duration-200" />
+                    </a>
                   </motion.div>
 
                   {/* Status */}
