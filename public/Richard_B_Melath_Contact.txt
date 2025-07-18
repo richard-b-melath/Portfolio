@@ -4,13 +4,13 @@ AI & Software Developer
 Email: richardbiju318@gmail.com
 Phone: +91 9544211720
 Location: Angamaly, Kerala, India
-Portfolio: https://richardbmelath.vercel.app/Richard_B_Melath_Contact.txt
+Portfolio: https://richardbmelath.vercel.app/
 
 Specialization:
 - AI Development
 - Software Engineering
 - Web Development
-- Innovation
+- ChatBot Development
 
 ---
 Digital Business Card
