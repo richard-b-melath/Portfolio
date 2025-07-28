@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 const navItems = [
   { name: 'Home', href: '#home' },
   { name: 'About', href: '#about' },
+  { name: 'Featured', href: '#featured' },
   { name: 'Skills', href: '#skills' },
   { name: 'Projects', href: '#projects' },
   { name: 'Resume', href: '#resume' },

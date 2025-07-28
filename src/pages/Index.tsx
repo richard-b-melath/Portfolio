@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { HeroSection } from '@/components/HeroSection';
 import { AboutSection } from '@/components/AboutSection';
+import { FeaturedSection } from '@/components/FeaturedSection';
 import { SkillsSection } from '@/components/SkillsSection';
 import { ProjectsSection } from '@/components/ProjectsSection';
 import { ResumeSection } from '@/components/ResumeSection';
@@ -36,6 +37,7 @@ const Index = () => {
       <main className="relative">
         <HeroSection />
         <AboutSection />
+        <FeaturedSection />
         <SkillsSection />
         <ProjectsSection />
         <ResumeSection />
