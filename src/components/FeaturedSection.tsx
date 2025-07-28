@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
-import { Award, Newspaper, Trophy, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Award, Newspaper, Trophy, Star, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
 
 const achievements = [
@@ -50,6 +50,7 @@ const achievements = [
 
 export const FeaturedSection = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState<{[key: number]: number}>({});
+  const [modalOpen, setModalOpen] = useState<{ achievementId: number; imageIndex: number } | null>(null);
 
   const nextImage = (achievementId: number, totalImages: number) => {
     setCurrentImageIndex(prev => ({
@@ -65,6 +66,34 @@ export const FeaturedSection = () => {
     }));
   };
 
+  const openModal = (achievementId: number, imageIndex: number) => {
+    setModalOpen({ achievementId, imageIndex });
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+  };
+
+  const closeModal = () => {
+    setModalOpen(null);
+    document.body.style.overflow = 'unset'; // Restore scroll
+  };
+
+  const nextModalImage = () => {
+    if (!modalOpen) return;
+    const achievement = achievements.find(a => a.id === modalOpen.achievementId);
+    if (!achievement) return;
+    
+    const nextIndex = (modalOpen.imageIndex + 1) % achievement.images.length;
+    setModalOpen({ ...modalOpen, imageIndex: nextIndex });
+  };
+
+  const prevModalImage = () => {
+    if (!modalOpen) return;
+    const achievement = achievements.find(a => a.id === modalOpen.achievementId);
+    if (!achievement) return;
+    
+    const prevIndex = (modalOpen.imageIndex - 1 + achievement.images.length) % achievement.images.length;
+    setModalOpen({ ...modalOpen, imageIndex: prevIndex });
+  };
+
   const ImageCarousel = ({ achievement }: { achievement: typeof achievements[0] }) => {
     const currentIndex = currentImageIndex[achievement.id] || 0;
     const hasMultipleImages = achievement.images.length > 1;
@@ -74,7 +103,8 @@ export const FeaturedSection = () => {
         <img
           src={achievement.images[currentIndex]}
           alt={`${achievement.title} - Image ${currentIndex + 1}`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+          onClick={() => openModal(achievement.id, currentIndex)}
           onError={(e) => {
             // Fallback for missing images
             const target = e.target as HTMLImageElement;
@@ -99,14 +129,20 @@ export const FeaturedSection = () => {
         {hasMultipleImages && (
           <>
             <button
-              onClick={() => prevImage(achievement.id, achievement.images.length)}
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage(achievement.id, achievement.images.length);
+              }}
               className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 hover:scale-110"
               aria-label="Previous image"
             >
               <ChevronLeft size={16} />
             </button>
             <button
-              onClick={() => nextImage(achievement.id, achievement.images.length)}
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage(achievement.id, achievement.images.length);
+              }}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full flex items-center justify-center text-white opacity-0 group-hover/carousel:opacity-100 transition-all duration-200 hover:scale-110"
               aria-label="Next image"
             >
@@ -128,7 +164,10 @@ export const FeaturedSection = () => {
             {achievement.images.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentImageIndex(prev => ({ ...prev, [achievement.id]: index }))}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentImageIndex(prev => ({ ...prev, [achievement.id]: index }));
+                }}
                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                   index === currentIndex 
                     ? 'bg-white scale-110' 
@@ -140,6 +179,96 @@ export const FeaturedSection = () => {
           </div>
         )}
       </div>
+    );
+  };
+
+  // Image Modal Component
+  const ImageModal = () => {
+    if (!modalOpen) return null;
+    
+    const achievement = achievements.find(a => a.id === modalOpen.achievementId);
+    if (!achievement) return null;
+
+    const currentImage = achievement.images[modalOpen.imageIndex];
+    const hasMultipleImages = achievement.images.length > 1;
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+        onClick={closeModal}
+      >
+        <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4">
+          {/* Close Button */}
+          <button
+            onClick={closeModal}
+            className="absolute top-6 right-6 w-10 h-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-colors z-10"
+            aria-label="Close modal"
+          >
+            <X size={20} />
+          </button>
+
+          {/* Main Image */}
+          <motion.img
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            src={currentImage}
+            alt={`${achievement.title} - Image ${modalOpen.imageIndex + 1}`}
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {/* Navigation for multiple images */}
+          {hasMultipleImages && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevModalImage();
+                }}
+                className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextModalImage();
+                }}
+                className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all hover:scale-110"
+                aria-label="Next image"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
+
+          {/* Dots Navigation */}
+          {hasMultipleImages && (
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2">\
+              {achievement.images.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setModalOpen({ ...modalOpen, imageIndex: index });
+                  }}
+                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    index === modalOpen.imageIndex
+                      ? 'bg-white scale-110'
+                      : 'bg-white/50 hover:bg-white/75'
+                  }`}
+                  aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
     );
   };
   return (
@@ -240,6 +369,9 @@ export const FeaturedSection = () => {
           </Card>
         </motion.div>
       </div>
+
+      {/* Image Modal */}
+      <ImageModal />
     </section>
   );
 };
