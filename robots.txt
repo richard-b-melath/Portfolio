@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://richardbmelath.vercel.app/sitemap.xml
