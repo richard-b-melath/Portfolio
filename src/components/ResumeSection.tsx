@@ -14,17 +14,35 @@ import {
 } from 'lucide-react';
 
 const experiences = [
+    {
+  title: 'Software Developer',
+  company: 'DoctorAssist.ai (Saraswatha Healthcare Research Pvt. Ltd.)',
+  period: 'Oct 2025 – Feb 2026',
+  description: 'Contributed to the development of an AI-powered healthcare platform, building scalable backend systems, modern web applications, and cloud-ready infrastructure to support intelligent clinical workflows.',
+  achievements: [
+  'Developed and delivered production-grade features for an AI-driven healthcare platform serving medical professionals and healthcare organizations',
+  'Designed and implemented scalable backend services using FastAPI and developed responsive frontend modules with React',
+  'Engineered secure data management workflows using MongoDB for handling healthcare-related application data',
+  'Containerized and optimized application services using Docker, enabling efficient deployment and environment consistency',
+  'Contributed to the design of a next-generation scalable system architecture to support future product growth and performance requirements',
+  'Collaborated closely with cross-functional teams to translate business and clinical requirements into reliable software solutions',
+  'Participated in system design discussions, API development, performance optimization, and production readiness initiatives'
+  ]
+  },
   {
     title: 'AI Intern',
     company: 'Senscript',
-    period: 'June 2025 – Present',
-    description: 'Built PDF parsing and email automation systems.',
+    period: 'June 2025 – Oct 2025',
+    description: 'Contributed to client-focused AI automation projects involving document intelligence, data extraction, and workflow automation for business-critical operations.',
     achievements: [
-      'Extracted structured/unstructured data using PDFPlumber and Tabula',
-      'Automated email classification and response generation',
-      'Processed multiple PDF types with error handling rules'
+    'Worked on confidential client projects to develop automated PDF data extraction pipelines for structured and unstructured documents',
+    'Built intelligent document processing solutions using PDFPlumber and Tabula, improving accuracy and efficiency of data retrieval workflows',
+    'Developed AI-powered email classification and response automation systems to streamline client communication processes',
+    'Designed robust error-handling and validation mechanisms for processing diverse document formats and complex datasets',
+    'Collaborated with senior developers to deliver scalable automation solutions aligned with client requirements'
     ]
   },
+
   {
     title: 'AI Intern',
     company: 'Information Kerala Mission',

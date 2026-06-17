@@ -133,7 +133,7 @@ export const AboutSection = () => {
             { number: '10+', label: 'Projects Built' },
             { number: '4+', label: 'Internships Completed' },
             { number: '15+', label: 'Tech Tools Used' },
-            { number: '3+', label: 'Hackathons Participated' }
+            { number: '4+', label: 'Hackathons Participated' }
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
