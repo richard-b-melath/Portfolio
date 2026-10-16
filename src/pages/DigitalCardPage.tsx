@@ -28,7 +28,7 @@ export const DigitalCardPage = () => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-  const primaryEmail = 'richardbijumelath48@gmail.com';
+  const primaryEmail = 'richardbmelath@gmail.com';
   const primaryPhone = '+919544211720';
   const whatsappUrl = 'https://wa.me/919544211720';
   const portfolioUrl = 'https://richardbmelath.vercel.app/';

@@ -232,7 +232,7 @@ const Index = () => {
                   <Twitter size={15} />
                 </a>
                 <a
-                  href="mailto:richardbijumelath48@gmail.com"
+                  href="mailto:richardbmelath@gmail.com"
                   className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white hover:text-black text-neutral-300 transition-colors"
                   title="Email"
                 >

@@ -12,16 +12,23 @@ import {
   Check, 
   Clock, 
   ShieldCheck, 
-  Terminal
+  Terminal,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Cpu
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/context/LanguageContext';
+import { sendContactEmail, EmailDispatchResponse } from '@/services/emailService';
 
 export const ContactSection = () => {
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  const [sentReceipt, setSentReceipt] = useState<EmailDispatchResponse | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,7 +36,7 @@ export const ContactSection = () => {
     message: '',
   });
 
-  const primaryEmail = 'richardbijumelath48@gmail.com';
+  const primaryEmail = 'richardbmelath@gmail.com';
 
   useEffect(() => {
     const updateTime = () => {
@@ -63,7 +70,13 @@ export const ContactSection = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleReset = () => {
+    setSentReceipt(null);
+    setErrorMessage(null);
+    setFormData({ name: '', email: '', subject: '', message: '' });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const { name, email, subject, message } = formData;
@@ -73,41 +86,25 @@ export const ContactSection = () => {
     }
 
     setIsSubmitting(true);
+    setErrorMessage(null);
 
     try {
-      const form = document.createElement('form');
-      form.action =
-        'https://docs.google.com/forms/d/e/1FAIpQLScMPWtn-nu7UfGdIu6Vx1_GYO-Loqj760R8x9vheNScdjdQKA/formResponse';
-      form.method = 'POST';
-      form.target = 'hidden_iframe';
-
-      const entries = {
-        'entry.1146036371': name,
-        'entry.1086438456': email,
-        'entry.1442822591': subject || 'General Portfolio Inquiry',
-        'entry.1452443315': message,
-      };
-
-      Object.entries(entries).forEach(([key, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
+      const receipt = await sendContactEmail({
+        name: name.trim(),
+        email: email.trim(),
+        subject: subject.trim(),
+        message: message.trim(),
       });
 
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        toast.success('Message transmitted successfully. Will respond promptly.');
-      }, 1200);
-    } catch (err) {
+      setSentReceipt(receipt);
+      toast.success('Transmission confirmed! Email dispatched to Richard Biju Melath via SMTP.');
+    } catch (err: any) {
+      console.error('SMTP Transmission error:', err);
+      const msg = err?.message || 'SMTP transmission encountered an issue.';
+      setErrorMessage(msg);
+      toast.error(msg);
+    } finally {
       setIsSubmitting(false);
-      toast.error(`Submission error. Please email directly at ${primaryEmail}`);
     }
   };
 
@@ -245,105 +242,216 @@ export const ContactSection = () => {
             className="lg:col-span-7"
           >
             <div className="glass-card p-5 sm:p-6 rounded-xl border border-white/10 tech-bracket relative">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-white">{t('contact.form.title')}</h3>
-                  <p className="text-[11px] text-neutral-500 mt-0.5">
-                    {t('contact.form.sub')}
-                  </p>
-                </div>
-                <div className="w-7 h-7 rounded-md bg-white/[0.08] flex items-center justify-center text-white">
-                  <Send size={13} />
-                </div>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[10px] uppercase text-neutral-400 mb-1">
-                      {t('contact.form.name')}
-                    </label>
-                    <input
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Your name"
-                      className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
-                    />
+              {sentReceipt ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.35 }}
+                  className="py-3 space-y-5"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="relative flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="animate-ping absolute inline-flex h-10 w-10 rounded-full bg-emerald-400 opacity-25" />
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <CheckCircle2 size={20} />
+                      </div>
+                    </div>
+                    <div>
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-emerald-400 text-[10px] font-mono font-medium mb-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>SMTP 250 OK // INBOX DISPATCHED</span>
+                      </div>
+                      <h3 className="text-base sm:text-lg font-bold text-white font-mono">
+                        {t('contact.success.title')}
+                      </h3>
+                      <p className="text-xs text-neutral-400 mt-1 font-sans leading-relaxed">
+                        {t('contact.success.sub')}
+                      </p>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-[10px] uppercase text-neutral-400 mb-1">
-                      {t('contact.form.email')}
-                    </label>
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="your.email@domain.com"
-                      className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
-                    />
+                  {/* Telemetry Receipt Box */}
+                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-2.5 text-xs font-mono">
+                    <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[11px]">
+                      <span className="text-neutral-500 uppercase tracking-wider">
+                        {t('contact.success.status')}:
+                      </span>
+                      <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                        <Check size={12} />
+                        {t('contact.success.delivered')}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-neutral-500 uppercase tracking-wider">
+                        {t('contact.success.recipient')}:
+                      </span>
+                      <span className="text-white font-medium truncate max-w-[220px]">
+                        {sentReceipt.recipient}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-neutral-500 uppercase tracking-wider">
+                        {t('contact.success.ticket')}:
+                      </span>
+                      <span className="text-neutral-300 font-medium">
+                        {sentReceipt.ticketId}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-neutral-500 uppercase tracking-wider">
+                        Gateway Protocol:
+                      </span>
+                      <span className="text-white">
+                        {sentReceipt.provider === 'google_smtp'
+                          ? 'Google Workspace SMTP (smtp.gmail.com)'
+                          : 'Encrypted SMTP Relay'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-neutral-500 uppercase tracking-wider">
+                        {t('contact.success.time')}:
+                      </span>
+                      <span className="text-neutral-400">
+                        {new Date(sentReceipt.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} IST
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-[10px] uppercase text-neutral-400 mb-1">
-                    {t('contact.form.subject')}
-                  </label>
-                  <input
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Software Role / AI Consulting / Research"
-                    className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
-                  />
-                </div>
+                  {/* Reset Action */}
+                  <div className="pt-1">
+                    <button
+                      onClick={handleReset}
+                      className="w-full h-10 rounded-lg btn-future-white font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <RefreshCw size={13} />
+                      <span>{t('contact.success.reset')}</span>
+                    </button>
+                  </div>
+                </motion.div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-sm sm:text-base font-bold text-white">{t('contact.form.title')}</h3>
+                      <p className="text-[11px] text-neutral-500 mt-0.5">
+                        {t('contact.form.sub')}
+                      </p>
+                    </div>
+                    <div className="w-7 h-7 rounded-md bg-white/[0.08] flex items-center justify-center text-white">
+                      <Send size={13} />
+                    </div>
+                  </div>
 
-                <div>
-                  <label className="block text-[10px] uppercase text-neutral-400 mb-1">
-                    {t('contact.form.message')}
-                  </label>
-                  <textarea
-                    name="message"
-                    required
-                    rows={4}
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Provide details about your project, team, or opportunity..."
-                    className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors resize-none font-sans"
-                  />
-                </div>
+                  {errorMessage && (
+                    <div className="mb-4 p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-neutral-300 flex items-start gap-2.5">
+                      <AlertCircle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        <div className="text-amber-300 font-semibold font-mono text-[11px]">
+                          SMTP Gateway Configuration
+                        </div>
+                        <div className="text-[11px] text-neutral-300 font-sans leading-relaxed">
+                          {errorMessage}
+                        </div>
+                        <div className="text-[10px] text-neutral-400 pt-1 font-mono">
+                          Direct email channel: <a href={`mailto:${primaryEmail}`} className="text-white underline">{primaryEmail}</a>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-                <div className="pt-1">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full h-10 rounded-lg btn-future-white font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
-                          <Send size={13} />
-                        </motion.div>
-                        <span>{t('contact.form.submitting')}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send size={13} />
-                        <span>{t('contact.form.submit')}</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
+                  <form onSubmit={handleSubmit} className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] uppercase text-neutral-400 mb-1">
+                          {t('contact.form.name')}
+                        </label>
+                        <input
+                          name="name"
+                          required
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="Your name"
+                          className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] uppercase text-neutral-400 mb-1">
+                          {t('contact.form.email')}
+                        </label>
+                        <input
+                          name="email"
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="your.email@domain.com"
+                          className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase text-neutral-400 mb-1">
+                        {t('contact.form.subject')}
+                      </label>
+                      <input
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Software Role / AI Consulting / Research"
+                        className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase text-neutral-400 mb-1">
+                        {t('contact.form.message')}
+                      </label>
+                      <textarea
+                        name="message"
+                        required
+                        rows={4}
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        placeholder="Provide details about your project, team, or opportunity..."
+                        className="w-full bg-neutral-950 border border-white/10 focus:border-white rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors resize-none font-sans"
+                      />
+                    </div>
+
+                    <div className="pt-1">
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full h-10 rounded-lg btn-future-white font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
+                              <RefreshCw size={13} />
+                            </motion.div>
+                            <span>{t('contact.form.submitting')}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send size={13} />
+                            <span>{t('contact.form.submit')}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
 
               <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] text-neutral-500">
                 <span className="flex items-center gap-1">
                   <ShieldCheck size={11} className="text-white" />
-                  Direct Encrypted Delivery
+                  Google SMTP Encrypted Gateway
                 </span>
                 <span>Response Target: &lt; 24h</span>
               </div>

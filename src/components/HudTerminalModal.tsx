@@ -160,7 +160,7 @@ export const HudTerminalModal = ({ isOpen, onClose, onNavigate }: HudTerminalMod
         newLogs.push({
           id: String(Date.now() + 1),
           type: 'output',
-          text: 'EMAIL: richardbijumelath48@gmail.com | PHONE: +91 9544211720 | LOCATION: Ernakulam, Kerala, India.',
+          text: 'EMAIL: richardbmelath@gmail.com | PHONE: +91 9544211720 | LOCATION: Ernakulam, Kerala, India.',
         });
         onNavigate('contact');
         break;
