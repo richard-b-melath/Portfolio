@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, X, CornerDownLeft, Sparkles, Shield, Cpu } from 'lucide-react';
+import { useEnvironment } from '@/context/EnvironmentContext';
 
 interface HudTerminalModalProps {
   isOpen: boolean;
@@ -82,6 +83,15 @@ export const HudTerminalModal = ({ isOpen, onClose, onNavigate }: HudTerminalMod
     return () => clearInterval(interval);
   }, [matrixActive]);
 
+  const {
+    weather,
+    setWeather,
+    showSnowman,
+    setShowSnowman,
+    showChristmas,
+    setShowChristmas,
+  } = useEnvironment();
+
   const handleCommand = (rawCmd: string) => {
     const cmd = rawCmd.trim().toLowerCase();
     if (!cmd) return;
@@ -105,7 +115,14 @@ export const HudTerminalModal = ({ isOpen, onClose, onNavigate }: HudTerminalMod
   • contact     - Transmission channels & direct email
   • matrix      - Toggle monochrome matrix telemetry stream
   • clear       - Flush terminal buffer
-  • exit        - Close terminal interface`,
+  • exit        - Close terminal interface
+
+ENVIRONMENT & EASTER EGGS:
+  • snowman     - Summon / toggle cryogenic AI snowman in Hero ⛄
+  • christmas   - Toggle festive holiday decor & garland 🎄
+  • sunny       - Switch atmospheric weather to radiant sunny ☀️
+  • rainy       - Switch atmospheric weather to cyber rain 🌧️
+  • snow        - Switch atmospheric weather to winter snowfall ❄️`,
         });
         break;
 
@@ -171,6 +188,79 @@ export const HudTerminalModal = ({ isOpen, onClose, onNavigate }: HudTerminalMod
           id: String(Date.now() + 1),
           type: 'system',
           text: matrixActive ? 'Matrix telemetry disabled.' : 'Matrix stream initialized.',
+        });
+        break;
+
+      case 'snowman':
+      case 'snow man':
+      case 'frosty':
+        setShowSnowman((prev) => {
+          const next = !prev;
+          if (next) {
+            onNavigate('home');
+          }
+          return next;
+        });
+        newLogs.push({
+          id: String(Date.now() + 1),
+          type: 'system',
+          text: !showSnowman
+            ? '⛄ [CRYOGENIC PROTOCOL]: Snowman deployed to Hero Section! Navigating to Hero view...'
+            : '⛄ [CRYOGENIC PROTOCOL]: Snowman recalled from Hero Section.',
+        });
+        break;
+
+      case 'merry christmas':
+      case 'happy christmas':
+      case 'christmas':
+      case 'chrismas':
+      case 'christmas decoration':
+      case 'christmas decorations':
+      case 'chrismas decoration':
+      case 'chrismas decorations':
+      case 'xmas':
+        setShowChristmas((prev) => !prev);
+        if (!showChristmas) setWeather('snow');
+        newLogs.push({
+          id: String(Date.now() + 1),
+          type: 'system',
+          text: !showChristmas
+            ? '🎄 [HOLIDAY PROTOCOL]: Merry Christmas! Festive holographic garland, lights & winter snow engaged.'
+            : '🎄 [HOLIDAY PROTOCOL]: Holiday decor deactivated.',
+        });
+        break;
+
+      case 'sunny':
+      case 'sun':
+      case 'sunn':
+        setWeather('sunny');
+        newLogs.push({
+          id: String(Date.now() + 1),
+          type: 'system',
+          text: '☀️ [WEATHER]: Solar flare online. Atmospheric background switched to SUNNY radiant beams.',
+        });
+        break;
+
+      case 'rainy':
+      case 'rain':
+      case 'raining':
+        setWeather('rain');
+        newLogs.push({
+          id: String(Date.now() + 1),
+          type: 'system',
+          text: '🌧️ [WEATHER]: Precipitation matrix online. Atmospheric background switched to CYBER RAIN streaks.',
+        });
+        break;
+
+      case 'snow':
+      case 'snowy':
+      case 'snowfall':
+      case 'winter':
+        setWeather('snow');
+        newLogs.push({
+          id: String(Date.now() + 1),
+          type: 'system',
+          text: '❄️ [WEATHER]: Cryo snowfall online. Atmospheric background switched to WINTER SNOWFALL.',
         });
         break;
 

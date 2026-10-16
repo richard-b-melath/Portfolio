@@ -10,6 +10,8 @@ import { ContactSection } from '@/components/ContactSection';
 import { BusinessCardModal } from '@/components/BusinessCardModal';
 import { FuturisticHud } from '@/components/FuturisticHud';
 import { HudTerminalModal } from '@/components/HudTerminalModal';
+import { WeatherCanvas } from '@/components/WeatherCanvas';
+import { ChristmasDecorations } from '@/components/ChristmasDecorations';
 import { Button } from '@/components/ui/button';
 import { CreditCard, ArrowUp, Github, Linkedin, Mail, Twitter, Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -58,6 +60,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black relative overflow-x-hidden">
+      {/* Global Atmospheric Weather Canvas (Winter Snowfall / Cyber Rain / Radiant Sunny) */}
+      <WeatherCanvas />
+
+      {/* Festive Holiday Christmas Decorations (LED Garland & Telemetry) */}
+      <ChristmasDecorations />
+
       {/* Global Futuristic HUD Overlay (Mouse Telemetry, Top Laser Progress, Ambient Aura) */}
       <FuturisticHud
         onOpenTerminal={() => setIsTerminalOpen(true)}
