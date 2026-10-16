@@ -1,163 +1,190 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { 
+  Brain, 
+  Server, 
+  Layout, 
+  Database, 
+  Globe, 
+  Cpu, 
+  Terminal, 
+  Search,
+  CheckCircle2
+} from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
-const skillCategories = [
+interface SkillCategory {
+  title: string;
+  icon: any;
+  skills: string[];
+}
+
+const skillCategories: SkillCategory[] = [
   {
-    category: 'AI / ML & Automation',
-    color: 'primary',
+    title: 'Artificial Intelligence & Machine Learning',
+    icon: Brain,
     skills: [
-      { name: 'Python & Libraries (NumPy, Pandas)', level: 90 },
-      { name: 'Machine Learning (Scikit-learn)', level: 85 },
-      { name: 'LLMs (ChatGPT, Gemini)', level: 80 },
-      { name: 'Prompt Engineering & Watsonx', level: 80 },
-      { name: 'UiPath & Automation', level: 75 }
-    ]
+      'Large Language Models (LLMs)',
+      'Generative AI & RAG',
+      'Conversational AI',
+      'Deep Learning',
+      'Machine Learning',
+      'Multi-Agent Systems',
+      'Prompt Engineering',
+      'Gemini & ChatGPT APIs',
+      'NLP (Natural Language Processing)'
+    ],
   },
   {
-    category: 'Web Development',
-    color: 'primary',
+    title: 'Backend Engineering & Architecture',
+    icon: Server,
     skills: [
-      { name: 'HTML, CSS, JS', level: 90 },
-      { name: 'Flask & REST APIs', level: 85 },
-      { name: 'WordPress & Wix Studio', level: 80 },
-      { name: 'SQL (Intermediate)', level: 70 },
-      { name: 'Google Cloud (Beginner)', level: 60 }
-    ]
+      'FastAPI (Python)',
+      'Flask',
+      'Uvicorn Stack',
+      'RESTful APIs',
+      'Docker Containerization',
+      'System Design',
+      'Python Automation (PDFPlumber, Tabula)',
+      'Microservices Architecture'
+    ],
   },
   {
-    category: 'Game / Graphics Dev',
-    color: 'primary',
+    title: 'Databases & Cloud Infrastructure',
+    icon: Database,
     skills: [
-      { name: 'C# & Unity', level: 88 },
-      { name: 'Blender', level: 80 },
-      { name: '3D Game Mechanics', level: 85 },
-      { name: 'Visual Studio', level: 78 },
-      { name: 'Git & GitHub', level: 90 }
-    ]
-  }
+      'MongoDB (NoSQL)',
+      'PostgreSQL',
+      'MySQL',
+      'Google Cloud Platform (GCP)',
+      'Git & GitHub / GitLab',
+      'Linux / Bash Scripting'
+    ],
+  },
+  {
+    title: 'Frontend & Interactive Web',
+    icon: Layout,
+    skills: [
+      'React.js',
+      'JavaScript (ESNext)',
+      'TypeScript',
+      'HTML5 / CSS3',
+      'Tailwind CSS',
+      'Vite & Modern Tooling'
+    ],
+  },
+];
+
+const languages = [
+  { name: 'English', level: 'C1 Proficient / B2 Working', note: 'Academic & Professional' },
+  { name: 'German', level: 'A2 (B1 in Preparation)', note: 'Little Flower Academy' },
+  { name: 'Malayalam', level: 'Native / Mother Tongue', note: 'Primary Language' },
 ];
 
 export const SkillsSection = () => {
+  const { t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
-    <section id="skills" className="py-20 px-6 bg-gradient-to-b from-background to-background/50">
+    <section id="skills" className="py-20 px-4 sm:px-6 relative bg-black font-mono">
       <div className="container mx-auto max-w-6xl">
+        {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center max-w-2xl mx-auto mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Technical <span className="bg-gradient-primary bg-clip-text text-transparent">Skills</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.05] border border-white/15 text-white text-xs font-medium mb-3">
+            <Cpu size={12} />
+            <span>{t('skills.tag')}</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white uppercase">
+            {t('skills.title1')} <span className="text-neutral-400">{t('skills.title2')}</span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            My skill set spans across artificial intelligence, machine learning, web development, and 3D game creation.
-            I thrive at the intersection of software engineering and creative problem-solving.
+          <p className="mt-3 text-sm sm:text-base text-neutral-400 leading-relaxed font-sans">
+            {t('skills.desc')}
           </p>
+
+          {/* Quick Search */}
+          <div className="mt-6 max-w-sm mx-auto relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500 w-3.5 h-3.5" />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('skills.search')}
+              className="w-full bg-neutral-950 border border-white/15 focus:border-white rounded-lg pl-9 pr-3 py-1.5 text-xs text-white placeholder-neutral-600 focus:outline-none transition-colors"
+            />
+          </div>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {skillCategories.map((category, categoryIndex) => (
-            <motion.div
-              key={category.category}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: categoryIndex * 0.2 }}
-              viewport={{ once: true }}
-            >
-              <Card className="holographic p-8 h-full">
-                <div className="text-center mb-8">
-                  <h3 className={`text-2xl font-bold mb-4 ${
-                    category.color === 'primary' 
-                      ? 'text-primary' 
-                      : 'text-secondary'
-                  }`}>
-                    {category.category}
+        {/* 4 Clean Skill Categories Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+          {skillCategories.map((category, idx) => {
+            const Icon = category.icon;
+            const filteredSkills = category.skills.filter((s) =>
+              s.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+
+            if (searchQuery && filteredSkills.length === 0) return null;
+
+            return (
+              <motion.div
+                key={category.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.08 }}
+                viewport={{ once: true }}
+                className="glass-card p-5 sm:p-6 rounded-xl border border-white/10 hover:border-white/30 transition-all tech-bracket"
+              >
+                <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-white/10">
+                  <div className="w-7 h-7 rounded-md bg-white/[0.06] border border-white/10 flex items-center justify-center text-white">
+                    <Icon size={14} />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-white">
+                    {category.title}
                   </h3>
                 </div>
 
-                <div className="space-y-6">
-                  {category.skills.map((skill, skillIndex) => (
-                    <motion.div
-                      key={skill.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      transition={{ 
-                        duration: 0.6, 
-                        delay: categoryIndex * 0.2 + skillIndex * 0.1 + 0.3 
-                      }}
-                      viewport={{ once: true }}
-                      className="space-y-3"
+                <div className="flex flex-wrap gap-1.5">
+                  {filteredSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-2.5 py-1 text-xs rounded-md bg-white/[0.03] border border-white/10 text-neutral-300 hover:text-white hover:border-white/30 transition-colors"
                     >
-                      <div className="flex justify-between items-center">
-                        <span className="text-foreground font-medium">{skill.name}</span>
-                        <span className={`text-sm font-bold ${
-                          category.color === 'primary' 
-                            ? 'text-primary' 
-                            : 'text-secondary'
-                        }`}>
-                          {skill.level}%
-                        </span>
-                      </div>
-                      
-                      <div className="relative">
-                        <div className="w-full bg-muted/20 rounded-full h-2">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${skill.level}%` }}
-                            transition={{ 
-                              duration: 1.5, 
-                              delay: categoryIndex * 0.2 + skillIndex * 0.1 + 0.5,
-                              ease: 'easeOut'
-                            }}
-                            viewport={{ once: true }}
-                            className={`h-2 rounded-full relative overflow-hidden ${
-                              category.color === 'primary' 
-                                ? 'bg-gradient-primary' 
-                                : 'bg-gradient-secondary'
-                            }`}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
-                          </motion.div>
-                        </div>
-                      </div>
-                    </motion.div>
+                      {skill}
+                    </span>
                   ))}
                 </div>
-              </Card>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* Additional Tools */}
+        {/* Language Skills - Clean & Simplistic */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mt-16 text-center"
+          className="glass-card p-5 rounded-xl border border-white/10"
         >
-          <h3 className="text-2xl font-bold mb-8 text-foreground">
-            Additional Tools & Platforms
-          </h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            {[
-              'PDFPlumber', 'Tabula', 'ChatGPT API', 'Gemini API', 'Visual Studio Code', 
-              'NPTEL Platform', 'Infosys Springboard', 'MathWorks Matlab', 'GitHub Pages', 
-              'Wix', 'WordPress', 'IBM Watsonx', 'Google Colab'
-            ].map((tech, index) => (
-              <motion.span
-                key={tech}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: index * 0.05 + 0.8 }}
-                viewport={{ once: true }}
-                className="px-4 py-2 bg-card/50 border border-primary/20 rounded-full text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 cursor-default"
+          <div className="flex items-center gap-2 mb-4 text-xs font-bold text-white">
+            <Globe size={14} />
+            <span>Language Proficiencies</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {languages.map((lang) => (
+              <div
+                key={lang.name}
+                className="p-3 rounded-lg bg-white/[0.02] border border-white/5"
               >
-                {tech}
-              </motion.span>
+                <div className="text-xs font-bold text-white">{lang.name}</div>
+                <div className="text-[11px] text-neutral-300 mt-0.5">{lang.level}</div>
+                <div className="text-[10px] text-neutral-500 mt-0.5 font-sans">{lang.note}</div>
+              </div>
             ))}
           </div>
         </motion.div>

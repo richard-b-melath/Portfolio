@@ -1,335 +1,455 @@
-'use client';
-
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import {
-  X,
-  Download,
-  Share2,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-  QrCode,
-  LinkedinIcon,
-  Github
+import { 
+  X, 
+  Download, 
+  Share2, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Globe, 
+  Copy, 
+  Check, 
+  Linkedin, 
+  Github, 
+  Wifi,
+  ExternalLink,
+  MessageCircle,
+  FileCode
 } from 'lucide-react';
-
 import { QRCodeCanvas } from 'qrcode.react';
+import { toast } from 'sonner';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface BusinessCardModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-// ✅ Replace with your actual public URL to the .txt file
-const fileURL = 'https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/Richard_B_Melath_Contact.txt';
-
 export const BusinessCardModal = ({ isOpen, onClose }: BusinessCardModalProps) => {
-  const contactInfo = `RICHARD B MELATH
-AI & Software Developer
+  const { language, t } = useLanguage();
+  const [copied, setCopied] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
-📧 Email: richardbiju318@gmail.com
-📱 Phone: +91 9544211720
-📍 Location: Angamaly, Kerala, India
-🌐 Portfolio: https://richardbmelath.vercel.app/
+  const primaryEmail = 'richardbijumelath48@gmail.com';
+  const primaryPhone = '+919544211720';
+  const whatsappUrl = 'https://wa.me/919544211720';
+  const portfolioUrl = 'https://richardbmelath.vercel.app/';
+  const linkedinUrl = 'https://www.linkedin.com/in/richardbmelath/';
+  const githubUrl = 'https://github.com/richard-b-melath';
 
-💼 Specialization:
-- AI Development
-- Software Engineering
-- Web Development
-- Innovation
+  // Domain redirect URL for the QR code visiting card
+  const cardUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/card`
+    : 'https://richardbmelath.vercel.app/card';
 
-🚀 Available for Projects
-
----
-Digital Business Card
-Generated: ${new Date().toLocaleDateString()}`;
-
-  const downloadContact = () => {
-    const element = document.createElement('a');
-    const file = new Blob([contactInfo], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = 'Richard_B_Melath_Contact.txt';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
+    setTilt({ x: rotateX, y: rotateY });
   };
 
-  const shareContact = async () => {
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+  };
+
+  const vCardData = `BEGIN:VCARD
+VERSION:3.0
+N:Melath;Richard;Biju;;
+FN:Richard Biju Melath
+TITLE:Agentic AI Specialist & Software Developer
+ORG:Universität Trier (M.Sc. Data Science)
+TEL;TYPE=CELL,VOICE:${primaryPhone}
+EMAIL;TYPE=INTERNET,PREF:${primaryEmail}
+URL;TYPE=WORK:${portfolioUrl}
+URL;TYPE=LINKEDIN:${linkedinUrl}
+URL;TYPE=GITHUB:${githubUrl}
+ADR;TYPE=HOME:;;Ernakulam;Kerala;;India
+NOTE:Agentic AI Specialist & Software Developer - DoctorAssist.ai, FastAPI & Data Science @ Universität Trier
+END:VCARD`;
+
+  const downloadVCard = () => {
+    const blob = new Blob([vCardData], { type: 'text/vcard;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Richard_Biju_Melath.vcf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success(language === 'de' ? 'vCard heruntergeladen!' : 'vCard downloaded! Open to add Richard directly to contacts.');
+  };
+
+  // Download standalone interactive HTML visiting card with clickable links
+  const downloadHtmlCard = () => {
+    const htmlContent = `<!DOCTYPE html>
+<html lang="${language}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Richard Biju Melath - Digital Visiting Card</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: #0a0a0a;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      margin-bottom: 20px;
+    }
+    h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .role { color: #d4d4d8; font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .org { color: #a1a1aa; font-size: 12px; margin-bottom: 24px; }
+    .links { display: flex; flex-direction: column; gap: 10px; }
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .link-item:hover {
+      background: #ffffff;
+      color: #000000;
+      border-color: #ffffff;
+    }
+    .footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      font-size: 11px;
+      color: #71717a;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">OFFICIAL DIGITAL VISITING CARD</div>
+    <h1>Richard Biju Melath</h1>
+    <div class="role">Agentic AI Specialist & Software Developer</div>
+    <div class="org">M.Sc. Data Science @ Universität Trier • DoctorAssist.ai</div>
+
+    <div class="links">
+      <a href="mailto:${primaryEmail}" class="link-item">
+        <span>✉</span> <strong>Email:</strong> ${primaryEmail}
+      </a>
+      <a href="tel:${primaryPhone}" class="link-item">
+        <span>✆</span> <strong>Phone:</strong> ${primaryPhone}
+      </a>
+      <a href="${whatsappUrl}" target="_blank" class="link-item">
+        <span>💬</span> <strong>WhatsApp:</strong> Direct Chat
+      </a>
+      <a href="${linkedinUrl}" target="_blank" class="link-item">
+        <span>in</span> <strong>LinkedIn:</strong> linkedin.com/in/richardbmelath
+      </a>
+      <a href="${githubUrl}" target="_blank" class="link-item">
+        <span>⌨</span> <strong>GitHub:</strong> github.com/richard-b-melath
+      </a>
+      <a href="${portfolioUrl}" target="_blank" class="link-item">
+        <span>🌐</span> <strong>Website:</strong> richardbmelath.vercel.app
+      </a>
+    </div>
+
+    <div class="footer">
+      Live visiting card generated from <a href="${cardUrl}" style="color: #ffffff;">${cardUrl}</a>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Richard_Biju_Melath_Visiting_Card.html';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success(language === 'de' ? 'Interaktive Karte (.html) mit klickbaren Links heruntergeladen!' : 'Interactive digital card (.html) downloaded with live clickable links!');
+  };
+
+  const copyDetails = () => {
+    navigator.clipboard.writeText(
+      `Richard Biju Melath\nAgentic AI Specialist & Software Developer\nM.Sc. Data Science @ Universität Trier\nEmail: ${primaryEmail}\nPhone: ${primaryPhone}\nWhatsApp: ${whatsappUrl}\nPortfolio: ${portfolioUrl}\nGitHub: ${githubUrl}\nLinkedIn: ${linkedinUrl}`
+    );
+    setCopied(true);
+    toast.success(language === 'de' ? 'Kontaktdaten in die Zwischenablage kopiert!' : 'Contact info copied to clipboard!');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Richard B Melath - Contact Information',
-          text: contactInfo,
+          title: 'Richard Biju Melath - Digital Visiting Card',
+          text: 'Richard Biju Melath - Agentic AI Specialist & Software Developer',
+          url: cardUrl,
         });
-      } catch (error) {
-        downloadContact();
+      } catch (err) {
+        copyDetails();
       }
     } else {
-      downloadContact();
+      navigator.clipboard.writeText(cardUrl);
+      toast.success(language === 'de' ? 'Karten-Link kopiert!' : 'Card link copied to clipboard!');
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="max-w-6xl w-[95vw] max-h-[95vh] p-4 sm:p-6 bg-transparent border-none overflow-hidden [&>button]:hidden"
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ duration: 0.4, type: 'spring', stiffness: 400, damping: 40 }}
-          className="relative w-full h-full"
-        >
+      <DialogContent className="max-w-4xl w-[95vw] p-0 bg-transparent border-none overflow-hidden [&>button]:hidden shadow-none">
+        <div className="relative p-2 sm:p-6 flex flex-col items-center font-mono">
+          
           {/* Custom Close Button */}
-          <Button
-            variant="ghost"
-            size="icon"
+          <button
             onClick={onClose}
-            className="absolute top-2 right-2 sm:top-4 sm:right-4 z-50 bg-background/90 backdrop-blur-sm border border-primary/30 shadow-lg hover:bg-background hover:border-primary/50 rounded-full w-8 h-8 sm:w-10 sm:h-10 transition-all duration-200"
+            className="absolute top-4 right-4 z-50 p-2 rounded-lg bg-white/10 hover:bg-white hover:text-black text-white border border-white/20 transition-colors cursor-pointer"
+            aria-label="Close modal"
           >
-            <X size={14} className="text-primary sm:w-4 sm:h-4" />
-          </Button>
+            <X size={16} />
+          </button>
 
-          <Card className="relative overflow-hidden bg-gradient-to-br from-background via-card to-background/80 border-2 border-primary/20 shadow-2xl max-h-[95vh] overflow-y-auto">
-            {/* Subtle grid pattern */}
-            <div className="absolute inset-0 opacity-[0.02]">
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23007fff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`,
-                }}
-              />
-            </div>
+          {/* 3D Interactive Card Wrapper */}
+          <div
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              perspective: '1200px',
+            }}
+            className="w-full max-w-xl py-4"
+          >
+            <motion.div
+              animate={{
+                rotateX: tilt.x,
+                rotateY: tilt.y,
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="relative rounded-2xl bg-black border border-white/20 p-5 sm:p-8 shadow-[0_0_60px_rgba(255,255,255,0.08)] overflow-hidden tech-bracket"
+              style={{
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.04] via-transparent to-white/[0.02] pointer-events-none" />
 
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
-
-            <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12">
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 items-start">
-                {/* Left Section - Info */}
-                <div className="xl:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
-                  {/* Header */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 lg:space-x-6"
-                  >
-                    <div className="w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-gradient-primary rounded-full flex items-center justify-center shadow-lg ring-2 ring-primary/20 flex-shrink-0">
-                      <span className="text-lg sm:text-xl lg:text-2xl font-bold text-primary-foreground">RM</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-wide bg-gradient-primary bg-clip-text text-transparent break-words">
-                        Richard B Melath
-                      </h1>
-                      <div className="h-px bg-gradient-to-r from-primary to-transparent w-24 sm:w-32 mt-2 lg:mt-3" />
-                      <p className="text-primary/50 font-medium text-base sm:text-lg tracking-wide mt-1 lg:mt-2">
-                        AI & Software Developer
-                      </p>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="sm:ml-20 lg:ml-26"
-                  >
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Specializing in artificial intelligence solutions and modern software development. Passionate about creating innovative technology that drives business success.
-                    </p>
-                  </motion.div>
-
-                  {/* Contact Grid */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6"
-                  >
-                    {/* Email */}
-                    <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 md:p-4 rounded-lg bg-card/50 border border-primary/10">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Mail size={14} className="text-primary sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Email</p>
-                        <p className="text-foreground text-xs sm:text-sm font-medium truncate">richardbiju318@gmail.com</p>
-                      </div>
-                    </div>
-
-                    {/* Phone */}
-                    <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 md:p-4 rounded-lg bg-card/50 border border-primary/10">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Phone size={14} className="text-primary sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Phone</p>
-                        <p className="text-foreground text-xs sm:text-sm font-medium">+91 9544211720</p>
-                      </div>
-                    </div>
-
-                    {/* Location */}
-                    <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 md:p-4 rounded-lg bg-card/50 border border-primary/10">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <MapPin size={14} className="text-primary sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Location</p>
-                        <p className="text-foreground text-xs sm:text-sm font-medium">Angamaly, Kerala, India</p>
-                      </div>
-                    </div>
-
-                    {/* Portfolio */}
-                    <div className="flex items-center space-x-2 sm:space-x-3 p-2.5 sm:p-3 md:p-4 rounded-lg bg-card/50 border border-primary/10">
-                      <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Globe size={14} className="text-primary sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Portfolio</p>
-                        <a
-                          href="https://richardbmelath.vercel.app/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary text-xs sm:text-sm font-medium hover:text-primary/80 truncate block"
-                        >
-                          https://richardbmelath.vercel.app/
-                        </a>
-                      </div>
-                    </div>
-                  </motion.div>
-
-                  {/* Skills */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex flex-wrap gap-2"
-                  >
-                    {['AI Development', 'Software Engineering', 'Web Development', 'Innovation'].map((skill) => (
-                      <span
-                        key={skill}
-                        className="px-2 py-1 sm:px-3 bg-primary/10 text-primary text-xs font-medium rounded-full border border-primary/20"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </motion.div>
+              {/* Card Top */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-7 rounded bg-neutral-800 border border-white/30 p-0.5 flex items-center justify-center">
+                    <div className="w-full h-full rounded border border-white/20 grid grid-cols-2 grid-rows-2 gap-0.5 p-0.5 bg-neutral-900" />
+                  </div>
+                  <Wifi size={16} className="rotate-90 text-neutral-500" />
                 </div>
 
-                {/* Right - QR Code & Actions */}
-                <div className="flex flex-col items-center space-y-4 sm:space-y-6 lg:space-y-8 order-first xl:order-last">
-                  {/* ✅ QR Code Section */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6 }}
-                    className="text-center"
-                  >
-                    <div className="relative">
-                      <div className="w-32 h-32 sm:w-36 sm:h-36 lg:w-40 lg:h-40 bg-card rounded-xl lg:rounded-2xl shadow-xl p-3 lg:p-4 flex items-center justify-center border-2 border-primary/10">
-                        <QRCodeCanvas
-                        value="https://richardbmelath.vercel.app/Richard_B_Melath_Contact.txt"
-                        size={120}
-                        bgColor="transparent"
-                        fgColor="#000000"
-                        includeMargin
-                        className="rounded-lg lg:rounded-xl w-full h-full dark:invert"
-                      />
-                      </div>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                        className="absolute -top-2 -right-2 lg:-top-3 lg:-right-3 w-5 h-5 lg:w-6 lg:h-6 bg-secondary rounded-full shadow-lg border-2 border-background"
-                      />
-                    </div>
-                    <p className="text-muted-foreground text-xs sm:text-sm mt-3 lg:mt-4 font-medium">
-                      Scan to download contact file
-                    </p>
-                  </motion.div>
-
-                  {/* Action Buttons */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                    className="flex flex-col space-y-2 sm:space-y-3 w-full max-w-xs"
-                  >
-                    <Button onClick={downloadContact} className="bg-gradient-primary text-primary-foreground text-sm sm:text-base">
-                      <Download size={16} className="mr-2 sm:w-[18px] sm:h-[18px]" />
-                      Save Contact
-                    </Button>
-                    <Button onClick={shareContact} variant="outline" className="border-primary/40 text-primary text-sm sm:text-base">
-                      <Share2 size={16} className="mr-2 sm:w-[18px] sm:h-[18px]" />
-                      Share Card
-                    </Button>
-                  </motion.div>
-
-                  {/* Socials */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                    className="flex space-x-3"
-                  >
-                    <a
-                      href="https://www.linkedin.com/in/richardbmelath/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 sm:w-12 sm:h-12 bg-card rounded-lg flex items-center justify-center border border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-200 group"
-                    >
-                      <LinkedinIcon size={18} className="text-primary sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform duration-200" />
-                    </a>
-                    <a
-                      href="https://github.com/richard-b-melath"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 sm:w-12 sm:h-12 bg-card rounded-lg flex items-center justify-center border border-primary/20 hover:border-primary/40 hover:bg-primary/10 transition-all duration-200 group"
-                    >
-                      <Github size={18} className="text-primary sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform duration-200" />
-                    </a>
-                  </motion.div>
-
-                  {/* Status */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.9 }}
-                    className="text-center"
-                  >
-                  </motion.div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-widest text-white font-bold px-2 py-0.5 rounded-full bg-white/10 border border-white/20">
+                    DIGITAL VISITING CARD
+                  </span>
                 </div>
               </div>
 
-              {/* Footer */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="mt-6 sm:mt-8 lg:mt-12 pt-4 sm:pt-6 lg:pt-8 border-t border-primary/10 text-center"
-              >
-                <p className="text-muted-foreground text-xs">Digital Business Card</p>
-              </motion.div>
-            </div>
+              {/* Card Body */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                <div className="md:col-span-7 space-y-3">
+                  <div>
+                    <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                      Richard Biju Melath
+                    </h2>
+                    <p className="text-xs text-neutral-300 font-medium mt-0.5">
+                      Agentic AI Specialist & Software Developer
+                    </p>
+                    <p className="text-[11px] text-neutral-500 mt-0.5">
+                      DoctorAssist.ai • M.Sc. Data Science @ Trier
+                    </p>
+                  </div>
 
-            {/* Light sweep effect */}
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: '100%' }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                repeatDelay: 6,
-                ease: 'easeInOut',
-              }}
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -skew-x-12 pointer-events-none"
-            />
-          </Card>
-        </motion.div>
+                  {/* Direct Clickable Contact Links */}
+                  <div className="space-y-2 pt-1 text-xs text-neutral-300">
+                    <a
+                      href={`mailto:${primaryEmail}`}
+                      className="flex items-center gap-2 hover:text-white transition-colors group cursor-pointer"
+                      title="Send email"
+                    >
+                      <Mail size={13} className="text-neutral-400 group-hover:text-white shrink-0" />
+                      <span className="truncate underline-offset-2 group-hover:underline text-[11px]">{primaryEmail}</span>
+                    </a>
+
+                    <a
+                      href={`tel:${primaryPhone}`}
+                      className="flex items-center gap-2 hover:text-white transition-colors group cursor-pointer"
+                      title="Call phone"
+                    >
+                      <Phone size={13} className="text-neutral-400 group-hover:text-white shrink-0" />
+                      <span className="underline-offset-2 group-hover:underline text-[11px]">+91 9544211720</span>
+                    </a>
+
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 hover:text-white transition-colors group cursor-pointer"
+                      title="Chat on WhatsApp"
+                    >
+                      <MessageCircle size={13} className="text-neutral-400 group-hover:text-white shrink-0" />
+                      <span className="underline-offset-2 group-hover:underline text-[11px]">Chat on WhatsApp</span>
+                    </a>
+
+                    <div className="flex items-center gap-2 text-neutral-400">
+                      <MapPin size={13} className="text-neutral-500 shrink-0" />
+                      <span className="text-[11px]">Trier, Germany / Ernakulam, India</span>
+                    </div>
+
+                    <a
+                      href={portfolioUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 hover:text-white transition-colors group cursor-pointer"
+                      title="Visit Portfolio"
+                    >
+                      <Globe size={13} className="text-neutral-400 group-hover:text-white shrink-0" />
+                      <span className="text-white underline underline-offset-2 text-[11px]">richardbmelath.vercel.app</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* QR Code Section: Redirects directly to the domain visiting card /card */}
+                <div className="md:col-span-5 flex flex-col items-center justify-center p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-center">
+                  <div className="p-2.5 bg-white rounded-lg shadow-md">
+                    <QRCodeCanvas
+                      value={cardUrl}
+                      size={110}
+                      bgColor="#ffffff"
+                      fgColor="#000000"
+                      level="M"
+                      className="rounded"
+                    />
+                  </div>
+                  <span className="text-[9px] text-white font-semibold mt-2.5 uppercase tracking-wider">
+                    Scan for Digital Card
+                  </span>
+                  <span className="text-[8px] text-neutral-400 mt-0.5 line-clamp-1">
+                    Redirects to {cardUrl.replace('https://', '')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons: Download options with clickable links */}
+              <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Download HTML with clickable links */}
+                  <button
+                    onClick={downloadHtmlCard}
+                    className="h-8 px-3 rounded-lg bg-white text-black font-semibold text-xs flex items-center justify-center gap-1.5 hover:bg-neutral-200 transition-colors cursor-pointer"
+                    title="Download interactive HTML card with live links"
+                  >
+                    <FileCode size={12} />
+                    <span>Download (.html)</span>
+                  </button>
+
+                  {/* Save vCard */}
+                  <button
+                    onClick={downloadVCard}
+                    className="h-8 px-2.5 rounded-lg border border-white/20 bg-white/5 text-white text-xs hover:bg-white/10 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    title="Save contact directly to phone"
+                  >
+                    <Download size={12} />
+                    <span>.vcf</span>
+                  </button>
+
+                  {/* Copy Details */}
+                  <button
+                    onClick={copyDetails}
+                    className="h-8 px-2.5 rounded-lg border border-white/20 bg-white/5 text-white text-xs hover:bg-white/10 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                    title="Copy details"
+                  >
+                    {copied ? <Check size={12} className="text-white" /> : <Copy size={12} />}
+                    <span>{copied ? 'Copied' : 'Copy'}</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 justify-end">
+                  {/* Link to Standalone /card Route */}
+                  <a
+                    href="/card"
+                    className="h-8 px-2.5 rounded-lg border border-white/20 bg-white/5 hover:bg-white hover:text-black text-white text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                    title="Open full page card"
+                  >
+                    <ExternalLink size={12} />
+                    <span>/card</span>
+                  </a>
+
+                  <button
+                    onClick={handleShare}
+                    className="h-8 px-2.5 rounded-lg border border-white/15 hover:bg-white/10 text-white text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                    title="Share link"
+                  >
+                    <Share2 size={12} />
+                  </button>
+
+                  <a
+                    href={linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-white/5 hover:bg-white hover:text-black text-neutral-300 transition-colors"
+                    title="LinkedIn"
+                  >
+                    <Linkedin size={13} />
+                  </a>
+
+                  <a
+                    href={githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-lg bg-white/5 hover:bg-white hover:text-black text-neutral-300 transition-colors"
+                    title="GitHub"
+                  >
+                    <Github size={13} />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

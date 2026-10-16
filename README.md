@@ -13,7 +13,7 @@ This is the personal portfolio website of **Richard B Melath**, an AI & Software
 - **Name**: Richard B Melath
 - **Role**: AI & Software Developer
 - **Location**: Angamaly, Kerala, India
-- **Email**: richardbiju318@gmail.com
+- **Email**: richardbijumelath48@gmail.com
 - **Phone**: +91 9544211720
 
 ### Specializations:
